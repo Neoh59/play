@@ -13,4 +13,12 @@ public class ConfigTest extends UnitTest {
         assertEquals("b", Play.configuration.get("included_b"));
         assertEquals(Play.frameworkPath, new File((String)Play.configuration.get("included_c")));
     }
+    
+    @Test
+    public void testIncludedAbsoluteConfig() {
+        assertEquals("a", Play.configuration.get("absolute.included_a"));
+        assertNull(Play.configuration.get("%test.absolute.included_b"));
+        assertEquals("b", Play.configuration.get("absolute.included_b"));
+        assertEquals(Play.frameworkPath, new File((String)Play.configuration.get("absolute.included_c")));
+    }
 }

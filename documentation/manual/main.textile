@@ -87,7 +87,7 @@ If you need to add some configuration options specific to your application, itâ€
 
 If any library needs a specific configuration file, try to file it under the @conf@ directory: **this directory is included in the Java ClassPath**.
 
-You can add additional configuration files to the Play configuration by specifying a file name in @application.conf@ as the value of a configuration option with <code>@include.</code> at the start of the key.
+You can add additional configuration files to the Play configuration by specifying a file name in @application.conf@ as the value of a configuration option with <code>@include.</code> or <code>@include-absolutepath.</code> at the start of the key.
 
 p(note). This is an experimental feature that does not yet work properly. In particular, placeholders and framework IDs are not handled properly.
 
@@ -102,6 +102,16 @@ mimetype.woff = application/x-font-woff
 you can include them by adding the following line to @application.conf@:
 
 bc. @include.mime = mime-types.conf
+
+The <code>@include-absolutepath.</code> works in the same way although it doesn't search the included file in the standard @conf@ directory but you have to set a complete path to the file you want to include.
+
+bc. @include-absolutepath.mime = /etc/play/config/mime-types.conf
+
+By the way, you can set this value as a system property. Like this you are able to specify a configuration file at runtime (it could be useful if you deploy your application as a war)
+
+bc. @include-absolutepath.mime = ${play.config.mime-types}
+play run -Dplay.config.mime-types=/etc/play/config/mime-types.conf
+
 
 h3. The lib directory
 

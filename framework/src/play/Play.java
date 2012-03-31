@@ -353,13 +353,19 @@ public class Play {
         }
     }
 
+    private static Properties readOneConfigurationFile(String filename) {
+    	return readOneConfigurationFile(null, filename);
+    }
 
     private static Properties readOneConfigurationFile(String filename) {
         Properties propsFromFile=null;
 
         VirtualFile appRoot = VirtualFile.open(applicationPath);
         
-        VirtualFile conf = appRoot.child("conf/" + filename);
+        String confPath = path == null ? "conf/" : path + "/";
+        VirtualFile conf = appRoot.child(confPath + filename);
+        Logger.info("Load application config file : %s", conf.getRealFile().getAbsolutePath());
+
         if (confs.contains(conf)) {
             throw new RuntimeException("Detected recursive @include usage. Have seen the file " + filename + " before");
         }
@@ -428,6 +434,16 @@ public class Play {
                 try {
                     String filenameToInclude = propsFromFile.getProperty(key.toString());
                     toInclude.putAll( readOneConfigurationFile(filenameToInclude) );
+                } catch (Exception ex) {
+                    Logger.warn("Missing include: %s", key);
+                }
+            } else if (key.toString().startsWith("@include-absolutepath.")) {
+                try {
+                    String propertyValue = propsFromFile.getProperty(key.toString());
+                    File confFile = new File(propertyValue);
+                    String filenameToInclude = confFile.getName();
+                    String pathToInclude = confFile.getParent();
+                    toInclude.putAll( readOneConfigurationFile(pathToInclude, filenameToInclude, seenFileNames) );
                 } catch (Exception ex) {
                     Logger.warn("Missing include: %s", key);
                 }
